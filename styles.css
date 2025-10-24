@@ -220,14 +220,15 @@ body {
 }
 
 .actions-grid {
-    /* REVERTING to FLEXBOX for robustness */
-    display: flex;
-    /* Center the group of items horizontally */
-    justify-content: center;
-    /* Space between the items */
-    gap: 20px;
+    /* FORCING FLEXBOX TO CENTER AND ARRANGE */
+    display: flex !important;
+    justify-content: center !important;
+    /* Prevent wrapping to a new line */
+    flex-wrap: nowrap !important; 
+    
+    gap: 20px !important;
     margin-top: 20px;
-    /* Ensure the container doesn't overflow */
+    
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
@@ -235,25 +236,23 @@ body {
 }
 
 .action-item {
-    /* SETTING EXPLICIT WIDTH AND HEIGHT */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /* This fixed width is crucial for Flexbox to arrange them properly */
-    width: 120px; 
-    height: 120px; 
-    
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* CRUCIAL: Fixed size to prevent stretching */
+    width: 120px !important; 
+    height: 120px !important; 
+    flex-shrink: 0 !important; /* Will not shrink */
+    flex-grow: 0 !important;   /* Will not grow */
+    
     border-radius: 15px;
     color: var(--text-light);
     text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s;
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    
-    /* Ensure items don't try to grow or shrink */
-    flex-shrink: 0;
-    flex-grow: 0;
 }
 
 .action-item:hover {
@@ -275,12 +274,13 @@ body {
     opacity: 0.8;
 }
 
+/* Color Classes (including the new one for Share) */
 .quick-actions .red-bg { background-color: var(--red); }
 .quick-actions .green-bg { background-color: var(--green); }
-/* Adjusted yellow button to ensure text is visible */
-.quick-actions .yellow-bg { background-color: var(--yellow); color: var(--text-dark); } 
+.quick-actions .yellow-bg { background-color: var(--yellow); color: var(--text-dark); }
 .quick-actions .purple-bg { background-color: var(--purple); }
-
+/* New class for the Share button */
+.quick-actions .share-bg { background-color: #34495e; }
 /* ------------------- LEARNING STYLES ------------------- */
 .learning-main {
     padding: 20px 5%;
@@ -654,6 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterAlerts(); 
     }
 });
+
 
 
 
