@@ -1,5 +1,10 @@
 // Global variable to hold all data after fetching
 window.allAlerts = []; 
+// NOTE: window.allAlerts will store the full array of alert objects.
+
+// --------------------------------------------------------------
+// INITIALIZATION AND EVENT LISTENERS
+// --------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Start the core function to fetch data and run detection
@@ -17,6 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 3. Attach filter function to the dropdown (assuming the HTML uses onchange="filterAlerts()")
+    const filterDropdown = document.getElementById('scam-type-filter');
+    if (filterDropdown) {
+        filterDropdown.addEventListener('change', filterAlerts);
+    }
 });
 
 // --------------------------------------------------------------
@@ -28,7 +39,7 @@ async function fetchAndAnalyzeAlerts() {
     alertsContainer.innerHTML = '<p style="text-align:center;">Analyzing data with detection engine...</p>';
 
     try {
-        // This connects to the function you created in the netlify/functions folder
+        // Connects to the Netlify function (e.g., netlify/functions/analyze-fraud.js)
         const response = await fetch('/.netlify/functions/analyze-fraud'); 
         
         if (!response.ok) {
@@ -37,11 +48,11 @@ async function fetchAndAnalyzeAlerts() {
         
         const analyzedData = await response.json(); 
         
-        window.allAlerts = analyzedData; // Save all data
+        window.allAlerts = analyzedData; // Save all data to the global variable
         
         renderAlerts(analyzedData);
         
-        // Show the overall system accuracy (using the static value from the function)
+        // Show the overall system accuracy (using the static value from the first item)
         if (analyzedData.length > 0) {
             displayAccuracyMeter(analyzedData[0].system_accuracy);
         }
@@ -49,6 +60,11 @@ async function fetchAndAnalyzeAlerts() {
     } catch (error) {
         console.error("Error fetching/analyzing alerts:", error);
         alertsContainer.innerHTML = '<p style="text-align:center; color: red;">Error: Could not connect to Detection Engine. Check Netlify deployment.</p>';
+        // Clear the accuracy meter on a critical error
+        const accuracyDisplay = document.getElementById('accuracy-display');
+        if (accuracyDisplay) {
+            accuracyDisplay.innerHTML = '';
+        }
     }
 }
 
@@ -58,8 +74,17 @@ function renderAlerts(alerts) {
 
     if (alerts.length === 0) {
         alertsContainer.innerHTML = '<p style="text-align:center;">No current alerts found matching the filter.</p>';
+        // Clear the accuracy meter display when the resulting alert list is empty
+        const accuracyDisplay = document.getElementById('accuracy-display');
+        if (accuracyDisplay) {
+            accuracyDisplay.innerHTML = '';
+        }
         return;
     }
+    
+    // Ensure the accuracy meter is displayed if the alerts are being rendered
+    // If window.systemAccuracy was stored, you would call displayAccuracyMeter(window.systemAccuracy) here.
+    // Since it's not, we rely on the initial fetch to set it.
     
     alerts.forEach(alert => {
         // Determine display properties based on detection result
@@ -89,20 +114,39 @@ function renderAlerts(alerts) {
     });
 }
 
-// Function triggered by the HTML <select onchange="filterAlerts()">
+// --------------------------------------------------------------
+// UTILITY FUNCTIONS
+// --------------------------------------------------------------
+
+// Function triggered by the HTML filter dropdown (either via onchange or addEventListener)
 function filterAlerts() {
+    // Check if the event was triggered by a change event or if we need to manually get the value
     const filterValue = document.getElementById('scam-type-filter').value;
     
+    // Get the original accuracy value if available (to re-display it after filtering)
+    let accuracyToRestore = null;
+    if (window.allAlerts.length > 0) {
+        accuracyToRestore = window.allAlerts[0].system_accuracy;
+    }
+
     if (filterValue === 'all') {
         renderAlerts(window.allAlerts);
     } else {
         const filtered = window.allAlerts.filter(alert => alert.type === filterValue);
         renderAlerts(filtered);
     }
+    
+    // Restore the accuracy meter if alerts are now present after filtering
+    if (document.getElementById('alerts-container').children.length > 0 && accuracyToRestore !== null) {
+        displayAccuracyMeter(accuracyToRestore);
+    }
 }
 
 // Function to display the required overall accuracy number
 function displayAccuracyMeter(accuracy) {
+    const accuracyElement = document.getElementById('accuracy-display');
+    if (!accuracyElement) return;
+
     const meterHTML = `
         <div class="accuracy-meter-box">
             <h3 class="meter-title">System Performance</h3>
@@ -110,5 +154,5 @@ function displayAccuracyMeter(accuracy) {
             <p class="meter-note">(Based on Rule-Engine evaluation against synthetic data)</p>
         </div>
     `;
-    document.getElementById('accuracy-display').innerHTML = meterHTML;
+    accuracyElement.innerHTML = meterHTML;
 }
