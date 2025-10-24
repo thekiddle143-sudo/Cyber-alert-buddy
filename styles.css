@@ -279,8 +279,10 @@ body {
 .quick-actions .green-bg { background-color: var(--green); }
 .quick-actions .yellow-bg { background-color: var(--yellow); color: var(--text-dark); }
 .quick-actions .purple-bg { background-color: var(--purple); }
-/* New class for the Share button */
-.quick-actions .share-bg { background-color: #34495e; }
+/* Add this to your quick-actions color section */
+.quick-actions .share-bg { 
+    background-color: #34495e; 
+}
 /* ------------------- LEARNING STYLES ------------------- */
 .learning-main {
     padding: 20px 5%;
@@ -654,6 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filterAlerts(); 
     }
 });
+
 
 
 
