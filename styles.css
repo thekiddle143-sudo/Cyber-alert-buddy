@@ -657,6 +657,87 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+/* Styling for the entire grid container */
+.alert-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Ensures a 3-column layout on wide screens */
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Base style for each alert card */
+.alert-card-item {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header (Type and Location) */
+.alert-card-item .card-header-dynamic {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Tag style (e.g., Phishing, Investment Fraud) */
+.alert-card-item .scam-type-tag {
+    /* DEFAULT BACKGROUND (can be overridden by specific type classes if desired) */
+    background-color: #3498db; 
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* Body (Incident, Keywords, URL) */
+.alert-card-item .card-body-dynamic h3 {
+    font-size: 18px;
+    margin: 5px 0 10px 0;
+    color: #333;
+}
+.alert-card-item .card-body-dynamic p {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 5px 0;
+}
+
+/* Footer (Status and Confidence) */
+.alert-card-item .card-footer-dynamic {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: auto; /* Pushes the footer to the bottom */
+}
+
+/* Status Tags (FRAUD DETECTED / SAFE) */
+.alert-card-item .status {
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 12px;
+}
+.alert-card-item .status.critical {
+    background-color: #dc3545; /* Red for FRAUD DETECTED */
+    color: white;
+}
+.alert-card-item .status.low {
+    background-color: #28a745; /* Green for SAFE / UNCERTAIN */
+    color: white;
+}
+
+/* Confidence Score */
+.alert-card-item .confidence-score {
+    color: #3498db; /* Blue for the score */
+    font-weight: bold;
+    font-size: 14px;
+}
 
 
 
