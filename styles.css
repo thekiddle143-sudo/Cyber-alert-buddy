@@ -557,4 +557,83 @@ body {
     font-weight: bold;
     color: var(--primary-blue);
     font-size: 0.9em;
+
 }
+// --- Alerts Data (Example Content) ---
+const allAlerts = [
+    { type: "Phishing", title: "Urgent: Email Login Expired", source: "suspicious@mail.com", date: "2025-10-24", severity: "High" },
+    { type: "Investment Fraud", title: "Guaranteed 100% Daily Returns", source: "Social Media Ad", date: "2025-10-23", severity: "High" },
+    { type: "Genuine Report", title: "Legitimate Bank Notification", source: "bank-alerts@bank.com", date: "2025-10-23", severity: "Low" },
+    { type: "Tech Support Scam", title: "Your PC has a virus, Call Now!", source: "Browser Pop-up", date: "2025-10-22", severity: "Medium" },
+    { type: "Phishing", title: "Invoice #1234 Due Today", source: "fake-vendor@corp.net", date: "2025-10-22", severity: "Medium" },
+    { type: "Investment Fraud", title: "Crypto Pump Group Invite", source: "Messaging App", date: "2025-10-21", severity: "High" },
+    { type: "Genuine Report", title: "Online Order Confirmation", source: "store@retailer.com", date: "2025-10-20", severity: "Low" },
+    // Expand this array with your live alert data
+];
+
+// --- DOM Elements for Alerts ---
+const alertsContainer = document.getElementById('alerts-container');
+const scamTypeFilter = document.getElementById('scam-type-filter');
+
+// --- Alert Filtering and Display Functions ---
+
+// Function to generate the HTML for a single alert card
+function createAlertCard(alert) {
+    let severityClass = '';
+    // Determine the color class based on severity for visual distinction
+    if (alert.severity === 'High') {
+        severityClass = 'alert-high';
+    } else if (alert.severity === 'Medium') {
+        severityClass = 'alert-medium';
+    } else {
+        severityClass = 'alert-low';
+    }
+
+    return `
+        <div class="alert-card ${severityClass}">
+            <h4 class="alert-title">${alert.title}</h4>
+            <p><strong>Type:</strong> ${alert.type}</p>
+            <p><strong>Source:</strong> ${alert.source}</p>
+            <p><strong>Date:</strong> ${alert.date}</p>
+            <span class="alert-severity">${alert.severity}</span>
+        </div>
+    `;
+}
+
+// Function triggered by the 'onchange' event in the dropdown (available globally)
+function filterAlerts() {
+    // Only run this function if the required DOM elements exist (i.e., we are on alerts.html)
+    if (!alertsContainer || !scamTypeFilter) return;
+
+    const selectedType = scamTypeFilter.value;
+    
+    // 1. Filter the data based on the selection
+    const filteredAlerts = allAlerts.filter(alert => {
+        if (selectedType === 'all') {
+            return true;
+        }
+        return alert.type === selectedType;
+    });
+
+    // 2. Display the filtered results
+    displayAlerts(filteredAlerts);
+}
+
+// Function to render the HTML for the alert cards
+function displayAlerts(alertsToDisplay) {
+    if (alertsContainer) {
+        if (alertsToDisplay.length === 0) {
+            alertsContainer.innerHTML = '<p style="text-align:center; padding: 20px;">No alerts found for the selected type.</p>';
+        } else {
+            alertsContainer.innerHTML = alertsToDisplay.map(createAlertCard).join('');
+        }
+    }
+}
+
+// Initial call to load all alerts when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if the alert filter elements exist before trying to run the function
+    if(alertsContainer && scamTypeFilter) {
+        filterAlerts(); 
+    }
+});
